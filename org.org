@@ -1,0 +1,102 @@
+#+TITLE: Weekly Assignment 05
+#+LANGUAGE: en
+#+OPTIONS: H:4 num:nil toc:nil \n:nil @:t ::t |:t ^:t *:t TeX:t LaTeX:t
+#+STARTUP: showeverything entitiespretty
+
+* DONE Create a Turing Machine to Delete a Character
+  CLOSED: [2018-02-19 Mon 14:56]
+  :LOGBOOK:
+  CLOCK: [2018-02-19 Mon 14:00]--[2018-02-19 Mon 14:56] =>  0:56
+  :END:
+  
+  This task is to delete a character from the tape string. Deleting the current
+  symbol means transforming the tape from x\sigma{}y to xy where \sigma is any symbol,
+  including a blank, and y is a string of nonblank symbols. Assume the input
+  alphabet is {a, b}.
+
+  HINT: You\rsquo{}ll need a couple of states (labeled q_a and q_b, say) for your TM to
+  remember a symbol between the time it is erased and the time it is copied in
+  the next square to the left. (The complete TM requires about 6 states total,
+  with 12 transitions.)
+
+* DONE Create a Turing Machine to Insert a Character
+  CLOSED: [2018-02-19 Mon 15:02]
+  :LOGBOOK:
+  CLOCK: [2018-02-19 Mon 14:56]--[2018-02-19 Mon 15:02] =>  0:06
+  :END:
+
+  This task is the opposite of the first one, namely, to insert a character into
+  the tape string. Inserting the symbol \sigma is done virtually the same way as
+  deleting, except that the single pass goes from left to right, symbols are
+  moved to the right instead of to the left, and the move that starts things off
+  writes \sigma instead of a blank.
+
+* DONE Create a Turing Machine to Copy a String
+  CLOSED: [2018-02-19 Mon 15:22]
+  :LOGBOOK:
+  CLOCK: [2018-02-19 Mon 15:02]--[2018-02-19 Mon 15:22] =>  0:20
+  :END:
+
+  Let \diamond represent the blank symbol. A /Copy/ TM start with tape \diamond{}x where x is a string of
+  nonblank symbols, and ends up with \diamond{}x\diamond{}x. Again, assume the input alphabet is {a, b}.
+
+  Hint: This TM requires about 10 states, and not quite double that many transitions.
+
+* DONE Refresh Your Knowledge of the 3x+1 Conjecture
+  CLOSED: [2018-02-19 Mon 15:35]
+  :LOGBOOK:
+  CLOCK: [2018-02-19 Mon 15:22]--[2018-02-19 Mon 15:35] =>  0:13
+  :END:
+
+#+BEGIN_SRC emacs-lisp :results silent
+  (defun 3x+1 (x)
+    (if (evenp x)
+        (/ x 2)
+      (1+ (* 3 x))))
+
+  (defun try-one (x)
+    (while (> x 1)
+      (setq x (3x+1 x)))
+    (= x 1))
+
+  (defun try-many (max &optional start)
+    (loop for x from (or start 1) to max
+          always (try-one x)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :results raw
+  (try-many 100000)
+#+END_SRC
+
+* DONE Create a *Non-Trivial* Turing Machine Program
+  CLOSED: [2018-02-20 Tue 16:14]
+   :LOGBOOK:
+   CLOCK: [2018-02-20 Tue 11:45]--[2018-02-20 Tue 14:14] =>  2:29
+   CLOCK: [2018-02-19 Mon 15:35]--[2018-02-19 Mon 17:18] =>  1:43
+   :END:
+  Write a Turing machine program for performing the continuing 3x+1
+  transformation on an input that is a binary number. So for example if the
+  initial tape has
+
+  =11=
+
+  which is the binary representation of the decimal number three, the final tape
+  will have
+
+  =11*1010*101*10000*1000*100*10*1=
+  which separates with a star the binary representations of the numbers in the
+  continuing 3x+1 transformation from 3 to 10 to 5 to 16 to 8 to 4 to 2 to 1.
+
+  State any assumptions you\rsquo{}ve made when you write up your results. For example,
+  you might assume that doing this program is easier with two or three tapes
+  than with one, and see if that particular assumption is warranted.
+
+  Use any resources you might find helpful, like [[http://morphett.info/turing/turing.html][this Turing Machine simulator]],
+  or the Java-based program called [[http://www.jflap.org/][JFLAP]].
+
+** Idea
+  copy -> isEven --> shift-right -------------i-> isOne -> done
+                 | else                       |    \|/
+                 '-> shift left -> add x + 1 -'  copy*
+
+  * copy is referencing the initial copy (aka it loops back)
